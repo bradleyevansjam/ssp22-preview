@@ -1679,19 +1679,41 @@ img.simg.banner{width:100%;height:clamp(120px,22vw,190px);object-fit:cover;objec
   .mx-tl{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-weight:700;font-size:15px;background:var(--surface)}
   .mx-tl b{margin-inline-start:6px}
   .mx-tl.full{border-color:var(--navy);background:var(--navy);color:#fff}
-  .mx-mk{display:inline-block;flex:none;width:14px;height:14px;border-radius:50%;margin-inline-end:7px;box-sizing:border-box}
-  .m-ring .mx-mk{background:#fff;border:3px solid #f5b400;box-shadow:0 0 0 2px var(--navy)}
-  .m-dot .mx-mk{background:var(--navy);border:2px solid #fff;box-shadow:0 0 0 1px var(--navy)}
-  .mx-tag{display:inline-flex;align-items:center;font-size:13px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin-bottom:4px;background:var(--surface)}
-  .mx-sign.tap.seen.g-ring{box-shadow:0 0 0 3px #f5b400,0 0 0 6px var(--navy)}
-  .mx-sign.tap.seen.g-ring::after{content:" \25CE"}
-  .mx-sign.tap.seen.g-dot{background:#fff;color:var(--navy);border-color:var(--navy);box-shadow:none}
-  .mx-sign.tap.seen.g-dot::after{content:" \25CF"}
-  .mx-sign.tap.seen.on{background:#f5b400;color:var(--ink)}
-  svg .mx-hs.seen.g-ring .mx-dot{stroke:#f5b400;stroke-width:5}
+  .mx-mk{display:inline-block;flex:none;width:16px;height:16px;border-radius:50%;margin-inline-end:8px;box-sizing:border-box}
+  /* the two marks (user, 2026-11-25: 'more obvious, red dot or orange dot'): ring = a red dot inside a red ring, dot = a plain orange dot;
+     the shape and the word differ too, so the meaning never rests on colour alone */
+  .mx-stage,.mx-tally{--mx-ring:#d0021b;--mx-dot:#f08a00}
+  .m-ring .mx-mk{background:var(--mx-ring);border:2px solid #fff;box-shadow:0 0 0 2px var(--mx-ring)}
+  .m-dot .mx-mk{background:var(--mx-dot);border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+  .mx-tag{display:inline-flex;align-items:center;font-size:14px;font-weight:800;border:2px solid var(--line);border-radius:999px;padding:3px 12px;margin-bottom:6px;background:var(--surface);color:var(--ink)}
+  .mx-tag.m-ring{border-color:var(--mx-ring)}.mx-tag.m-dot{border-color:var(--mx-dot)}
+  .mx-pop .mx-detail.m-ring{border-color:var(--mx-ring)}.mx-pop .mx-detail.m-dot{border-color:var(--mx-dot)}
+  .mx-pop .mx-detail.m-ring .mx-arrow{border-color:var(--mx-ring)}.mx-pop .mx-detail.m-dot .mx-arrow{border-color:var(--mx-dot)}
+  /* a plan with groups: a spot not yet opened is neutral, so orange only ever means the dot group */
+  .mx-grouped .mx-sign.tap:not(.seen){box-shadow:0 0 0 3px #fff;animation:mxsignw 1.8s infinite}
+  @keyframes mxsignw{0%,100%{box-shadow:0 0 0 3px #fff}50%{box-shadow:0 0 0 7px rgba(255,255,255,.45)}}
+  .mx-grouped .mx-sign.tap.seen{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--ink);animation:none}
+  .mx-grouped .mx-sign.tap.seen::after{content:none}
+  .mx-grouped .mx-sign.tap.seen::before{content:"";flex:none;width:14px;height:14px;border-radius:50%;box-sizing:border-box}
+  .mx-sign.tap.seen.g-ring{border:3px solid var(--mx-ring);box-shadow:0 0 0 2px #fff,0 0 0 5px var(--mx-ring)}
+  .mx-sign.tap.seen.g-ring::before{background:var(--mx-ring);border:2px solid #fff;box-shadow:0 0 0 2px var(--mx-ring)}
+  .mx-sign.tap.seen.g-dot{border:3px solid var(--mx-dot);box-shadow:0 0 0 2px #fff}
+  .mx-sign.tap.seen.g-dot::before{background:var(--mx-dot)}
+  .mx-grouped .mx-sign.tap.on{background:#fff;color:var(--ink)}
+  .mx-grouped.popped .mx-sign.on{box-shadow:0 0 0 3px #fff,0 0 22px 10px rgba(255,255,255,.9)}
+  svg .mx-hs.seen.g-ring .mx-dot{fill:var(--mx-ring);stroke:#fff;stroke-width:3}
+  svg .mx-hs.seen.g-dot .mx-dot{fill:var(--mx-dot)}
+  @media (max-width:639px){   /* a phone plan is small: the opened sign keeps its size and the mark sits on its corner, so the signs still fit */
+    .mx-grouped .mx-sign.tap.seen{display:block;border-width:2px}
+    .mx-grouped .mx-sign.tap.seen::before{position:absolute;top:-7px;inset-inline-start:-7px;width:13px;height:13px}
+    .mx-sign.tap.seen.g-ring{box-shadow:0 0 0 1px #fff,0 0 0 3px var(--mx-ring)}
+    .mx-sign.tap.seen.g-dot{box-shadow:none}
+    .mx-stage.mx-grouped.mx-allin:not(.popped) .mx-sign.g-ring{animation-name:mxrings}
+  }
+  @keyframes mxrings{50%{box-shadow:0 0 0 1px #fff,0 0 0 6px var(--mx-ring)}}
   .mx-stage.mx-allin:not(.popped) .mx-sign.g-ring{animation:mxring 1.1s ease-in-out 3}
-  @keyframes mxring{50%{transform:translate(-50%,-50%) scale(1.14);box-shadow:0 0 0 4px #f5b400,0 0 0 8px var(--navy)}}
-  @media (prefers-reduced-motion:reduce){.mx-pop .mx-detail,.mx-stage.mx-allin .mx-sign.g-ring{animation:none}.mx-stage.popped .mx-map svg{transition:none}}
+  @keyframes mxring{50%{transform:translate(-50%,-50%) scale(1.14);box-shadow:0 0 0 3px #fff,0 0 0 9px var(--mx-ring)}}
+  @media (prefers-reduced-motion:reduce){.mx-pop .mx-detail,.mx-stage.mx-allin .mx-sign.g-ring,.mx-grouped .mx-sign.tap:not(.seen){animation:none}.mx-stage.popped .mx-map svg{transition:none}}
   .mx-list ol[hidden]{display:none}   /* the list stays folded until asked (2026-11-06: display:grid overrode hidden) */
   @media (max-width:639px){.st-rings{flex-wrap:wrap;justify-content:center;overflow-x:visible}}   /* every story circle visible on a phone (2026-11-06) */
 /* numbered labels on a plan picture + its key (x_assetLabels, 2026-11-09) */
@@ -5366,7 +5388,7 @@ Object.assign(BUILD,{
       G.forEach(function(g){var tot=P.filter(function(p){return gOf(p)===g;}).length;gc[g.key]=0;
         tal.appendChild(el('<span class="mx-tl m-'+mk(g)+'" data-g="'+g.key+'"><i class="mx-mk" aria-hidden="true"></i>'+T(g.label)+' <b dir="ltr"><span class="mx-tn">0</span> / '+tot+'</b></span>'));});
       h.appendChild(tal);}
-    var stage=el('<div class="mx-stage'+(pop?' mx-pop':'')+'"></div>');
+    var stage=el('<div class="mx-stage'+(pop?' mx-pop':'')+(G.length?' mx-grouped':'')+'"></div>');
     wrap.innerHTML=svg+'</svg>'+signs;stage.appendChild(wrap);h.appendChild(stage);
     /* a plan picture is shown whole, never cropped (Review 1 #11, 2026-11-13): the points are % of the whole picture, so the
        plan takes the picture's own shape once it loads (a 16:9 picture in the 600x430 box lost 11% each side and the spots drifted) */
@@ -5400,7 +5422,7 @@ Object.assign(BUILD,{
     function open(i){var p=P[i];[].forEach.call(wrap.querySelectorAll('.mx-hs'),function(g){g.classList.toggle('on',+g.dataset.i===i);});
       det.innerHTML='<button type="button" class="mx-close" aria-label="'+U('close')+'">&#10005; '+U('close')+'</button>'+(p.media?'<img class="mx-pic" src="images/'+sc2_assetFile(p.media)+'" alt="'+strip(p.title).replace(/"/g,'&quot;')+'" onerror="this.remove()">':'')+'<div class="mx-row">'+icon(p.icon)+'<div>'+(gOf(p)?'<span class="mx-tag m-'+mk(gOf(p))+'"><i class="mx-mk" aria-hidden="true"></i>'+T(gOf(p).label)+'</span>':'')+'<b>'+(sg?'':'<span class="mx-num">'+(i+1)+'</span>')+T(p.title)+'</b>'+T(p.text)+'</div></div>'+(pop?'<i class="mx-arrow" aria-hidden="true"></i>':'');
       /* phone (user, 2026-11-06: 'mobile screen is not big enough'): the card opens as a sheet from the bottom over the plan; Close or Escape returns to the number */
-      det.classList.add('open');det.setAttribute('role','dialog');det.setAttribute('aria-label',strip(p.title));
+      det.classList.add('open');det.classList.remove('m-ring','m-dot');if(gOf(p))det.classList.add('m-'+mk(gOf(p)));det.setAttribute('role','dialog');det.setAttribute('aria-label',strip(p.title));
       var cb=det.querySelector('.mx-close'),back=function(){det.classList.remove('open');var g=wrap.querySelector('.mx-hs[data-i="'+i+'"]');if(pop){stage.classList.remove('popped');if(g)g.classList.remove('on');}if(g&&g.focus)g.focus();};closeNow=back;
       cb.addEventListener('click',back);det.onkeydown=function(e){if(e.key==='Escape'){e.preventDefault();back();}};
       var phone=window.matchMedia&&matchMedia('(max-width:639px)').matches;
@@ -5412,7 +5434,8 @@ Object.assign(BUILD,{
           det.classList.toggle('up',!below);det.querySelector('.mx-arrow').style.left=Math.max(18,Math.min(w-18,cx-l))+'px';}}
       if(phone||pop)cb.focus();
       if(!seen[i]){seen[i]=1;n++;wrap.querySelector('.mx-hs[data-i="'+i+'"]').classList.add('seen');lst.querySelector('button[data-i="'+i+'"]').classList.add('seen');
-        var g0=gOf(p);if(g0){wrap.querySelector('.mx-hs[data-i="'+i+'"]').classList.add('g-'+mk(g0));gc[g0.key]++;var tl=tal.querySelector('[data-g="'+g0.key+'"]'),tot=P.filter(function(q){return gOf(q)===g0;}).length;
+        var g0=gOf(p);if(g0&&sg)requestAnimationFrame(fit);   /* the opened sign is wider (its mark): keep the signs apart */
+        if(g0){wrap.querySelector('.mx-hs[data-i="'+i+'"]').classList.add('g-'+mk(g0));gc[g0.key]++;var tl=tal.querySelector('[data-g="'+g0.key+'"]'),tot=P.filter(function(q){return gOf(q)===g0;}).length;
           tl.querySelector('.mx-tn').textContent=gc[g0.key];if(gc[g0.key]>=tot)tl.classList.add('full');if(n===P.length)stage.classList.add('mx-allin');}
         prog.querySelector('.mx-n').textContent=n;needTxt();if(n>=need&&btn.disabled){btn.disabled=false;prTake(s,h);}}}
     [].forEach.call(wrap.querySelectorAll('.mx-hs'),function(g){g.addEventListener('click',function(){open(+g.dataset.i);});
