@@ -1564,13 +1564,26 @@ img.simg.banner{width:100%;height:clamp(120px,22vw,190px);object-fit:cover;objec
   .srv .tl-end{cursor:pointer}
   .srv .tl-enddot{fill:var(--orange);stroke:#fff;stroke-width:1.2}
   .srv .tl-endt{font-size:6.4px;font-weight:800;fill:var(--navy);dominant-baseline:central}
-  .srv .tl-ball{opacity:0;pointer-events:none}
-  .srv .tl-ball circle{fill:#fff;stroke:var(--navy);stroke-width:.7}
-  .srv .tl-ball path{fill:var(--navy)}
-  .srv .tl-ball.go{animation:tlkick 1.4s ease-out 1}
-  .srv .tl-ball.go .tl-spin{transform-box:fill-box;transform-origin:center;animation:tlspin 1.4s linear 1}
-  @keyframes tlkick{0%{opacity:1;transform:translate(0,0)}30%{opacity:1;transform:translate(12px,-8px)}62%{opacity:1;transform:translate(27px,0)}76%{opacity:1;transform:translate(32px,-3px)}90%{opacity:1;transform:translate(36px,0)}100%{opacity:0;transform:translate(38px,0)}}
-  @keyframes tlspin{to{transform:rotate(540deg)}}
+  /* the ball rests on the end dot and looks like a football (user, 2026-11-25: 'more obvious ... look like a soccer ball'):
+     kicked, it flies a high arc over the label, bounces twice, then is back on its dot */
+  .srv .tl-bskin{fill:#fff}
+  .srv .tl-bpatch{fill:#111}
+  .srv .tl-bseam{fill:none;stroke:#111;stroke-width:.45}
+  .srv .tl-brim{fill:none;stroke:#111;stroke-width:.7}
+  .srv .tl-ball.go{animation:tlkick 2.4s linear 1}
+  .srv .tl-ball.go .tl-spin{transform-box:view-box;transform-origin:50px -4.5px;animation:tlspin 2.4s linear 1}
+  @keyframes tlkick{
+    0%{transform:translate(0,0);opacity:1;animation-timing-function:ease-out}
+    26%{transform:translate(15px,-13px);animation-timing-function:ease-in}
+    48%{transform:translate(30px,0);animation-timing-function:ease-out}
+    60%{transform:translate(36px,-6px);animation-timing-function:ease-in}
+    72%{transform:translate(42px,0);animation-timing-function:ease-out}
+    78%{transform:translate(44px,-2px);animation-timing-function:ease-in}
+    84%{transform:translate(46px,0);opacity:1}
+    90%{transform:translate(46px,0);opacity:0}
+    91%{transform:translate(0,0);opacity:0}
+    100%{transform:translate(0,0);opacity:1}}
+  @keyframes tlspin{0%{transform:rotate(0)}84%,100%{transform:rotate(720deg)}}
   @media (prefers-reduced-motion:reduce){.srv .tl-ball.go,.srv .tl-ball.go .tl-spin{animation:none}}
   @media (prefers-reduced-motion:reduce){.srv .tl-lane.tl-in .tl-card{animation:none}.srv .tl-bar i,.srv .tl-tick,.srv .tl-hand,.srv .tl-left{transition:none}}
   .sr-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 12px}
@@ -3808,14 +3821,14 @@ function srTimeline(s,h){
   if(clock){
     /* the end of the countdown (2026-11-25): x_dialEnd = a label for a dot above the top of the dial, where the countdown reaches zero;
        x_dialEndAnim "kick" = a small ball is kicked from that dot once, when the last stop is first reached, and again on a tap of the dot */
-    var endL=s.x_dialEnd?strip(T(s.x_dialEnd)):'',vy=endL?-14:0;
+    var endL=s.x_dialEnd?strip(T(s.x_dialEnd)):'',vy=endL?(s.x_dialEndAnim==='kick'?-23:-14):0,cid='tlb'+(window.__tlb=(window.__tlb||0)+1);
     var g='<svg class="tl-dial" viewBox="0 '+vy+' 100 '+(100-vy)+'" dir="ltr" aria-hidden="true"><circle class="tl-face" cx="50" cy="50" r="44"/><circle class="tl-left" cx="50" cy="50" r="44"/>',whole=mx===Math.round(mx)&&mx<=12;
     for(var k=0;k<(whole?mx*2:12);k++){var d=k/(whole?mx*2:12)*360,big=!whole||k%2===0;g+='<line class="tl-min'+(big?' big':'')+'" x1="'+pol(d,big?38:40).split(',')[0]+'" y1="'+pol(d,big?38:40).split(',')[1]+'" x2="'+pol(d,42).split(',')[0]+'" y2="'+pol(d,42).split(',')[1]+'"/>';
       if(whole&&big){var q=pol(d,31).split(',');g+='<text class="tl-num" x="'+q[0]+'" y="'+q[1]+'">'+(mx-k/2)+'</text>';}}
     g+='<g class="tl-hand"><line x1="50" y1="50" x2="50" y2="12"/><circle class="tl-knob" cx="50" cy="8" r="6"/></g><circle class="tl-hub" cx="50" cy="50" r="3"/>';
     steps.forEach(function(_,i){var q=pol(ang(i),44).split(',');g+='<circle class="tl-stop" data-i="'+i+'" cx="'+q[0]+'" cy="'+q[1]+'" r="3.2"/>';});
-    if(endL)g+='<g class="tl-end"><circle class="tl-enddot" cx="50" cy="-3" r="2.6"/><text class="tl-endt" x="56.5" y="-3">'+endL+'</text>'+
-      (s.x_dialEndAnim==='kick'?'<g class="tl-ball"><g class="tl-spin"><circle cx="50" cy="-3" r="3"/><path d="M50 -4.6l1.5 1.1 -.6 1.8h-1.8l-.6 -1.8z"/></g></g>':'')+'</g>';
+    if(endL)g+='<g class="tl-end"><circle class="tl-enddot" cx="50" cy="-4.5" r="2.6"/><text class="tl-endt" x="'+(s.x_dialEndAnim==='kick'?57.5:56.5)+'" y="-4.5">'+endL+'</text>'+
+      (s.x_dialEndAnim==='kick'?'<clipPath id="'+cid+'"><circle cx="50" cy="-4.5" r="4.6"/></clipPath><g class="tl-ball"><g class="tl-spin"><circle class="tl-bskin" cx="50" cy="-4.5" r="4.6"/><g clip-path="url(#'+cid+')"><path class="tl-bpatch" d="M50.00 -6.25L51.66 -5.04L51.03 -3.08L48.97 -3.08L48.34 -5.04zM50.00 -7.30L48.34 -8.51L48.97 -10.47L51.03 -10.47L51.66 -8.51zM52.66 -5.37L53.30 -7.32L55.36 -7.32L55.99 -5.37L54.33 -4.16zM51.65 -2.23L53.70 -2.23L54.34 -0.28L52.67 0.93L51.01 -0.28zM48.35 -2.23L48.99 -0.28L47.33 0.93L45.66 -0.28L46.30 -2.23zM47.34 -5.37L45.67 -4.16L44.01 -5.37L44.64 -7.32L46.70 -7.32z"/><path class="tl-bseam" d="M50.00 -6.25 L50.00 -7.30M51.66 -5.04 L52.66 -5.37M51.03 -3.08 L51.65 -2.23M48.97 -3.08 L48.35 -2.23M48.34 -5.04 L47.34 -5.37"/></g><circle class="tl-brim" cx="50" cy="-4.5" r="4.6"/></g></g>':'')+'</g>';
     dial=el('<div class="tl-clock">'+g+'</svg></div>');
     var ball=dial.querySelector('.tl-ball'),endG=dial.querySelector('.tl-end');
     if(ball)kickBall=function(){ball.classList.remove('go');void ball.getBoundingClientRect();ball.classList.add('go');};
