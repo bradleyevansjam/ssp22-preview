@@ -1689,27 +1689,34 @@ img.simg.banner{width:100%;height:clamp(120px,22vw,190px);object-fit:cover;objec
   .mx-tag.m-ring{border-color:var(--mx-ring)}.mx-tag.m-dot{border-color:var(--mx-dot)}
   .mx-pop .mx-detail.m-ring{border-color:var(--mx-ring)}.mx-pop .mx-detail.m-dot{border-color:var(--mx-dot)}
   .mx-pop .mx-detail.m-ring .mx-arrow{border-color:var(--mx-ring)}.mx-pop .mx-detail.m-dot .mx-arrow{border-color:var(--mx-dot)}
-  /* a plan with groups: a spot not yet opened is neutral, so orange only ever means the dot group */
-  .mx-grouped .mx-sign.tap:not(.seen){box-shadow:0 0 0 3px #fff;animation:mxsignw 1.8s infinite}
-  @keyframes mxsignw{0%,100%{box-shadow:0 0 0 3px #fff}50%{box-shadow:0 0 0 7px rgba(255,255,255,.45)}}
-  .mx-grouped .mx-sign.tap.seen{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--ink);animation:none}
-  .mx-grouped .mx-sign.tap.seen::after{content:none}
-  .mx-grouped .mx-sign.tap.seen::before{content:"";flex:none;width:14px;height:14px;border-radius:50%;box-sizing:border-box}
+  /* a plan with groups (user, 2026-11-25: 'show the colour before opening'): every sign wears its group's dot and ring from the start;
+     a dark sign is not yet opened, an opened sign turns white with a tick */
+  .mx-grouped .mx-sign{--mk:#fff}
+  .mx-grouped .mx-sign.g-ring{--mk:var(--mx-ring)}.mx-grouped .mx-sign.g-dot{--mk:var(--mx-dot)}
+  .mx-grouped .mx-sign.tap:not(.seen){box-shadow:0 0 0 3px var(--mk);animation:mxsignw 1.8s infinite}
+  @keyframes mxsignw{0%,100%{box-shadow:0 0 0 3px var(--mk)}50%{box-shadow:0 0 0 6px var(--mk)}}
+  .mx-grouped .mx-sign.tap.g-ring,.mx-grouped .mx-sign.tap.g-dot{display:inline-flex;align-items:center;gap:6px}
+  .mx-grouped .mx-sign.tap.g-ring::before,.mx-grouped .mx-sign.tap.g-dot::before{content:"";flex:none;width:14px;height:14px;border-radius:50%;box-sizing:border-box;background:var(--mk);border:2px solid #fff}
+  .mx-grouped .mx-sign.tap.g-ring::before{box-shadow:0 0 0 2px var(--mk)}
+  .mx-grouped .mx-sign.tap.seen{background:#fff;color:var(--ink);animation:none}
   .mx-sign.tap.seen.g-ring{border:3px solid var(--mx-ring);box-shadow:0 0 0 2px #fff,0 0 0 5px var(--mx-ring)}
-  .mx-sign.tap.seen.g-ring::before{background:var(--mx-ring);border:2px solid #fff;box-shadow:0 0 0 2px var(--mx-ring)}
   .mx-sign.tap.seen.g-dot{border:3px solid var(--mx-dot);box-shadow:0 0 0 2px #fff}
-  .mx-sign.tap.seen.g-dot::before{background:var(--mx-dot)}
   .mx-grouped .mx-sign.tap.on{background:#fff;color:var(--ink)}
   .mx-grouped.popped .mx-sign.on{box-shadow:0 0 0 3px #fff,0 0 22px 10px rgba(255,255,255,.9)}
-  svg .mx-hs.seen.g-ring .mx-dot{fill:var(--mx-ring);stroke:#fff;stroke-width:3}
-  svg .mx-hs.seen.g-dot .mx-dot{fill:var(--mx-dot)}
-  @media (max-width:639px){   /* a phone plan is small: the opened sign keeps its size and the mark sits on its corner, so the signs still fit */
-    .mx-grouped .mx-sign.tap.seen{display:block;border-width:2px}
-    .mx-grouped .mx-sign.tap.seen::before{position:absolute;top:-7px;inset-inline-start:-7px;width:13px;height:13px}
+  svg .mx-hs.g-ring .mx-dot{fill:var(--mx-ring);stroke:#fff;stroke-width:3}
+  svg .mx-hs.g-dot .mx-dot{fill:var(--mx-dot)}
+  @media (max-width:639px){   /* a phone plan is small: the sign keeps its size and the mark sits on its corner, so the signs still fit */
+    .mx-grouped .mx-sign.tap.g-ring,.mx-grouped .mx-sign.tap.g-dot{display:block}
+    .mx-grouped .mx-sign.tap.g-ring::before,.mx-grouped .mx-sign.tap.g-dot::before{position:absolute;top:-7px;inset-inline-start:-7px;width:13px;height:13px}
+    .mx-grouped .mx-sign.tap:not(.seen){box-shadow:0 0 0 2px var(--mk)}
+    .mx-grouped .mx-sign.tap.seen{border-width:2px}
+    .mx-grouped .mx-sign.tap.seen::after{content:none}   /* no tick on a phone: the white sign says 'opened' and the sign keeps its size */
     .mx-sign.tap.seen.g-ring{box-shadow:0 0 0 1px #fff,0 0 0 3px var(--mx-ring)}
     .mx-sign.tap.seen.g-dot{box-shadow:none}
     .mx-stage.mx-grouped.mx-allin:not(.popped) .mx-sign.g-ring{animation-name:mxrings}
   }
+  @keyframes mxsignp{0%,100%{box-shadow:0 0 0 2px var(--mk)}50%{box-shadow:0 0 0 4px var(--mk)}}
+  @media (max-width:639px){.mx-grouped .mx-sign.tap:not(.seen){animation-name:mxsignp}}
   @keyframes mxrings{50%{box-shadow:0 0 0 1px #fff,0 0 0 6px var(--mx-ring)}}
   .mx-stage.mx-allin:not(.popped) .mx-sign.g-ring{animation:mxring 1.1s ease-in-out 3}
   @keyframes mxring{50%{transform:translate(-50%,-50%) scale(1.14);box-shadow:0 0 0 3px #fff,0 0 0 9px var(--mx-ring)}}
@@ -5390,6 +5397,7 @@ Object.assign(BUILD,{
       h.appendChild(tal);}
     var stage=el('<div class="mx-stage'+(pop?' mx-pop':'')+(G.length?' mx-grouped':'')+'"></div>');
     wrap.innerHTML=svg+'</svg>'+signs;stage.appendChild(wrap);h.appendChild(stage);
+    if(G.length)[].forEach.call(wrap.querySelectorAll('.mx-hs'),function(e){var g=gOf(P[+e.dataset.i]);if(g)e.classList.add('g-'+mk(g));});   /* the group's colour shows before a spot is opened */
     /* a plan picture is shown whole, never cropped (Review 1 #11, 2026-11-13): the points are % of the whole picture, so the
        plan takes the picture's own shape once it loads (a 16:9 picture in the 600x430 box lost 11% each side and the spots drifted) */
     if(pic&&!sg){var probe=new Image();probe.onload=function(){if(!probe.naturalWidth)return;var H2=Math.round(W*probe.naturalHeight/probe.naturalWidth),sv=wrap.querySelector('svg');
