@@ -27,8 +27,11 @@
       <file href="brand/fonts/Ubuntu-Light.ttf"/>
       <file href="brand/fonts/Ubuntu-Medium.ttf"/>
       <file href="brand/fonts/Ubuntu-Regular.ttf"/>
+      <file href="captions/ssp22-v1-critical.ar.vtt"/>
       <file href="captions/ssp22-v1-critical.en.vtt"/>
+      <file href="captions/ssp22-v2-check.ar.vtt"/>
       <file href="captions/ssp22-v2-check.en.vtt"/>
+      <file href="captions/ssp22-v3-reply.ar.vtt"/>
       <file href="captions/ssp22-v3-reply.en.vtt"/>
       <file href="fonts/CREDITS.txt"/>
       <file href="fonts/TwemojiCountryFlags.woff2"/>
