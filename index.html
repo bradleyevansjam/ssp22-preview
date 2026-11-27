@@ -494,6 +494,7 @@
   .htile[aria-pressed="true"]::after{content:"✓";position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;background:var(--orange);color:var(--on-orange);font-weight:800;display:flex;align-items:center;justify-content:center;font-size:15px}
   .htile:disabled{opacity:.85}
   .htile:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+  .hgrid.whole .htile img,.hgrid.whole .htile video,.hgrid.whole .htile .tph,.hgrid.whole .htile .mediaph{aspect-ratio:16/9;object-fit:contain;background:#fff}   /* x_tileFit 'whole': nothing cut off */
   .scene{position:relative;max-width:600px;margin:0 auto 12px;border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm)}
   .scene .sceneimg{width:100%;display:block}
   .hot{position:absolute;border:0;background:transparent;cursor:pointer;border-radius:12px;padding:0}
@@ -3694,10 +3695,10 @@ Object.assign(BUILD,{
     if(s.x_oneByOne){   /* x_oneByOne (2026-11-25): one item at a time on a big card; a tap stamps a check mark on it, then it joins the kept list and the next one comes. No new words: the count uses the 'done' label. */
       var N=s.items.length,i=0,cnt=el('<p class="clcount" aria-live="polite"></p>'),card=el('<button type="button" class="clcard" aria-pressed="false"><span class="cltext"></span><span class="clstamp" aria-hidden="true">✓</span></button>'),kept=el('<div class="clist clkept"></div>');
       h.appendChild(cnt);h.appendChild(card);h.appendChild(kept);var bt=cont(s,h,null,T(s.button));bt.dataset.label=bt.textContent;gate(bt,0,N,U('ticked'));
-      var show=function(){card.querySelector('.cltext').innerHTML=T(s.items[i]);card.setAttribute('aria-pressed','false');card.classList.remove('stamped');cnt.textContent=U('done',{n:i,N:N});};
+      var show=function(){card.querySelector('.cltext').innerHTML=T(s.items[i]);card.setAttribute('aria-pressed','false');card.classList.remove('stamped');cnt.innerHTML=U('done',{n:i,N:N});};
       card.addEventListener('click',function(){if(i>=N||card.classList.contains('stamped'))return;card.classList.add('stamped');card.setAttribute('aria-pressed','true');var it=s.items[i];
         later(function(){kept.insertBefore(el('<div class="citem" aria-pressed="true"><span class="cbox"></span><span>'+T(it)+'</span></div>'),kept.firstChild);i++;gate(bt,i,N,U('ticked'));
-          if(i<N){show();card.focus();}else{card.remove();cnt.textContent=U('done',{n:N,N:N});bt.focus();}},650);});
+          if(i<N){show();card.focus();}else{card.remove();cnt.innerHTML=U('done',{n:N,N:N});bt.focus();}},650);});
       show();return;
     }
     var list=el('<div class="clist"></div>'),n=s.items.length,k=0;
@@ -4084,7 +4085,7 @@ Object.assign(BUILD,{
   imageTiles:function(s,h){
     head(s,h);sit(s,h);task(s,h);
     var tiles=s.tiles||s.items,multi=tiles.filter(function(t){return t.correct;}).length>1,sel={},first=true,done_=false;
-    var grid=el('<div class="hgrid"></div>'),fbHost=el('<div></div>');
+    var grid=el('<div class="hgrid'+(s.x_tileFit==='whole'?' whole':'')+'"></div>'),fbHost=el('<div></div>');   /* x_tileFit 'whole': wide pictures shown whole, never cropped to a square (2026-11-26) */
     tiles.forEach(function(t,i){
       var m=t.media||'',isVid=/\.mp4$/i.test(m);
       var b=el('<button type="button" class="htile" aria-pressed="false">'+(isVid?'<video muted loop playsinline preload="metadata" src="video/'+m+'"></video>':m?'<img src="images/'+m+'" alt="'+strip(t.caption)+'">':'<span class="tph">'+icon(t.icon)+'</span>')+'<span class="cap">'+T(t.caption)+'</span></button>');
@@ -5861,7 +5862,7 @@ function allocOne(s,h){
       top.appendChild(el('<p class="rdn al1-n">'+U('of',{a:SL.length-todo+1,b:SL.length})+'</p>'));
       var card=el('<div class="al-p on al1-card" data-id="'+String(p.id).replace(/"/g,'&quot;')+'"></div>');
       card.innerHTML=(p.icon?icon(p.icon):'')+'<span class="al-pt"><b>'+T(p.name)+'</b>'+(T(p.note)?'<span class="al-note">'+T(p.note)+'</span>':'')+'</span>';
-      top.appendChild(card);top.appendChild(el('<p class="hint al-hint">'+U('allocNow',{n:strip(p.name)})+'</p>'));
+      top.appendChild(card);top.appendChild(el('<p class="hint al-hint">'+(T(X(s,'allocNow'))?T(X(s,'allocNow')).replace('{n}',strip(p.name)):U('allocNow',{n:strip(p.name)}))+'</p>'));   /* x_allocNow (2026-11-26): the screen's own hint, e.g. places on a plan, not roles */
     }
     body.innerHTML='';
     var groups=[],gi={};SL.forEach(function(x){var g=T(x.group)||'';if(!(g in gi)){gi[g]=groups.length;groups.push({g:g,list:[]});}groups[gi[g]].list.push(x);});
