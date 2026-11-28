@@ -3383,13 +3383,19 @@ var BUILD={
     s.items.forEach(function(it,i){
       var b=el('<button class="tile" type="button" aria-pressed="false"><span class="ck"></span>'+icon(it.icon)+'<span class="nm">'+T(it.text)+'</span></button>');
       b.addEventListener('click',function(){var on=b.getAttribute('aria-pressed')==='true';if(!on&&s.x_maxPick&&Object.keys(sel).length>=s.x_maxPick)return;   /* x_maxPick (2026-11-22): no more picks than asked for */
-      b.setAttribute('aria-pressed',on?'false':'true');if(on)delete sel[i];else sel[i]=1;chk.disabled=!Object.keys(sel).length;});
+      b.setAttribute('aria-pressed',on?'false':'true');if(on)delete sel[i];else sel[i]=1;var np=Object.keys(sel).length;chk.disabled=!np||!!(s.unscored&&s.x_maxPick&&np<s.x_maxPick);});   /* a poll asks for its full pick ("Pick three") */
       grid.appendChild(b);
     });
     h.appendChild(grid);
     var fbHost=el('<div></div>');h.appendChild(fbHost);
     var chk=contBtn(U('check'),function(){
       tries++;fbHost.innerHTML='';
+      if(s.unscored){   /* an unscored poll (user, 2026-11-28, SSP 2.2 0.2): no right or wrong - any pick moves on, with the neutral note, picks kept as chosen */
+        grid.querySelectorAll('.tile').forEach(function(t){t.disabled=true;});
+        chk.style.display='none';
+        fbHost.appendChild(fb('tip','',T(s.x_feedbackCorrect||s.feedbackCorrect)||''));
+        cont(s,h);svin(fbHost);return;
+      }
       var missing=s.items.some(function(it,i){return it.correct&&!sel[i];});
       var extra=s.items.some(function(it,i){return !it.correct&&sel[i];});
       if(!missing&&!extra){
